@@ -1,0 +1,36 @@
+---
+# This workflow installs the latest version of Terraform CLI. On pull request events, this workflow will run
+# `terraform init`, `terraform fmt`, and `terraform validate`.
+name: "Terraform Lint"
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  terraform_lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository to the GitHub Actions runner
+      - uses: actions/checkout@v3
+
+      # Install the latest version of Terraform CLI
+      - name: Setup Terraform CLI
+        uses: hashicorp/setup-terraform@v2
+
+      # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+      - name: Terraform Init
+        run: terraform init
+
+      # Checks that all Terraform configuration files adhere to a canonical format
+      - name: Terraform Format
+        run: terraform fmt -check -diff
+
+      # Generates an execution plan for Terraform
+      - name: Terraform Validate
+        run: terraform validate
